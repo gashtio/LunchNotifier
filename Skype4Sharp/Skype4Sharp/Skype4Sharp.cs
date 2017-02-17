@@ -89,6 +89,11 @@ namespace Skype4Sharp
             targetChat.Type = Enums.ChatType.Private;
             return mainMessageModule.createMessage(targetChat, newMessage, messageType);
         }
+        public Chat[] GetRecentChats()
+        {
+            blockUnauthorized();
+            return mainMessageModule.getRecentChats();
+        }
         public User GetUser(string inputName)
         {
             blockUnauthorized();

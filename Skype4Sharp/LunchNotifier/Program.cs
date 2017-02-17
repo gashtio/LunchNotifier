@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Skype4Sharp;
-using Skype4Sharp.Events;
-using Skype4Sharp.Auth;
-using Skype4Sharp.Helpers;
-using Skype4Sharp.Enums;
-using System.Threading;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 
 namespace LunchNotifier
 {
@@ -18,10 +7,10 @@ namespace LunchNotifier
         public void Run()
         {
             List<ILunchProvider> lunchProviders = new List<ILunchProvider>();
-            // Add lunch providers
+            lunchProviders.Add(new Providers.DummyLunchProvider());
 
             List<ILunchNotifyTarget> lunchNotifyTargets = new List<ILunchNotifyTarget>();
-            // Add lunch notify targets
+            lunchNotifyTargets.Add(new Targets.SkypeNotifier("cred.json"));
 
             foreach (var provider in lunchProviders)
             {

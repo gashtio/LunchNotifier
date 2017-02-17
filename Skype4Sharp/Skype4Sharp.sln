@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skype4Sharp", "Skype4Sharp\Skype4Sharp.csproj", "{D3602A98-D456-417E-ADC6-42B6D834CF2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleBot", "ExampleBot\ExampleBot.csproj", "{7F2D5F45-3548-4EF9-B2A2-02ECC190CD43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LunchNotifier", "LunchNotifier\LunchNotifier.csproj", "{7F2D5F45-3548-4EF9-B2A2-02ECC190CD43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

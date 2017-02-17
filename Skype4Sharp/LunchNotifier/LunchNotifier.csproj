@@ -7,8 +7,8 @@
     <ProjectGuid>{7F2D5F45-3548-4EF9-B2A2-02ECC190CD43}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExampleBot</RootNamespace>
-    <AssemblyName>ExampleBot</AssemblyName>
+    <RootNamespace>LunchNotifier</RootNamespace>
+    <AssemblyName>LunchNotifier</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,7 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers.cs" />
+    <Compile Include="ILunchNotifyTarget.cs" />
+    <Compile Include="ILunchProvider.cs" />
+    <Compile Include="LunchInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

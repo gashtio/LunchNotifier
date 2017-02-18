@@ -7,7 +7,8 @@ namespace LunchNotifier
         public void Run()
         {
             List<ILunchProvider> lunchProviders = new List<ILunchProvider>();
-            lunchProviders.Add(new Providers.DummyLunchProvider());
+            lunchProviders.Add(new Providers.Krivoto());
+            //lunchProviders.Add(new Providers.DummyLunchProvider());
 
             List<ILunchNotifyTarget> lunchNotifyTargets = new List<ILunchNotifyTarget>();
             lunchNotifyTargets.Add(new Targets.SkypeNotifier("cred.json"));

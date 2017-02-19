@@ -64,11 +64,12 @@ namespace LunchNotifier.Providers
             }
             var weekMenu = sb.ToString();
 
-            var today = GetDayOfWeekString(GetNormalizedDayOfWeek(DateTime.Today.DayOfWeek + 6));
-            var tomorrow = GetDayOfWeekString(GetNormalizedDayOfWeek(DateTime.Today.DayOfWeek + 7));
+            var today = DateTime.Today;
+            var todayName = GetDayOfWeekString(GetNormalizedDayOfWeek(today.DayOfWeek));
+            var tomorrowName = GetDayOfWeekString(GetNormalizedDayOfWeek(today.DayOfWeek + 1));
 
-            var todayIdx = weekMenu.IndexOf(today);
-            var tomorrowIdx = weekMenu.IndexOf(tomorrow);
+            var todayIdx = weekMenu.IndexOf(todayName);
+            var tomorrowIdx = weekMenu.IndexOf(tomorrowName);
 
             string result = "";
             if (todayIdx != -1)

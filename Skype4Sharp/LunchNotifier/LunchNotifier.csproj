@@ -39,9 +39,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Skype4Sharp\bin\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Skype4Sharp">
-      <HintPath>..\Skype4Sharp\bin\Debug\Skype4Sharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -63,6 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Skype4Sharp\Skype4Sharp.csproj">
+      <Project>{d3602a98-d456-417e-adc6-42b6d834cf2e}</Project>
+      <Name>Skype4Sharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -7,7 +7,10 @@ namespace Skype4Sharp // Used by multiple items not in Skype4Sharp.Helpers
     {
         public static string UrlEncode(this string inputString)
         {
-            return HttpUtility.UrlEncode(inputString);
+            return HttpUtility.UrlEncode(inputString).
+                Replace("!", "%21").
+                Replace("(", "%28").
+                Replace(")", "%29");
         }
         public static string HtmlDecode(this string inputString)
         {

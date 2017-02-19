@@ -58,6 +58,41 @@ namespace Skype4Sharp.Skype4SharpCore
                     }
                     dynamic decodedJSON = JsonConvert.DeserializeObject(rawJSON);
                     return decodedJSON != null ? decodedJSON.skypetoken : null;
+                case Enums.SkypeTokenType.OAuth:
+                    // Step 1
+                    HttpWebRequest oauthTokenRequest = parentSkype.mainFactory.createWebRequest_GET("https://login.skype.com/login/oauth/microsoft?client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com", new string[][] { });
+                    string ppft = "";
+                    string mspReq = "";
+                    string mspok = "";
+                    using (HttpWebResponse webResponse = (HttpWebResponse)oauthTokenRequest.GetResponse())
+                    {
+                        string rawDownload = new StreamReader(webResponse.GetResponseStream()).ReadToEnd();
+                        ppft = new Regex("<input type=\"hidden\" name=\"PPFT\" id=\"i0327\" value=\"(.*?)\"/>").Match(rawDownload).Groups[1].ToString();
+                        string cookie = webResponse.Headers.Get("Set-Cookie");
+                        mspReq = new Regex("MSPRequ=(.*?);").Match(cookie).Groups[1].ToString();
+                        mspok = new Regex("MSPOK=(.*?);").Match(cookie).Groups[1].ToString();
+                    }
+                    // Step 2
+                    HttpWebRequest tokenVerifyRequest = parentSkype.mainFactory.createWebRequest_POST("https://login.live.com/ppsecure/post.srf?wa=wsignin1.0&wp=MBI_SSL&wreply=https%3A%2F%2Flw.skype.com%2Flogin%2Foauth%2Fproxy%3Fclient_id%3D578134%26site_name%3Dlw.skype.com%26redirect_uri%3Dhttps%253A%252F%252Fweb.skype.com%252F",
+                        new string[][] { new string[] { "Cookie", "MSPRequ=" + mspReq }, new string[] { "Cookie", "MSPOK=" + mspok }, new string[] { "Cookie", "CkTst=G" + Helpers.Misc.getTime().ToString() } },
+                        Encoding.ASCII.GetBytes(string.Format("login={0}&passwd={1}&PPFT={2}", parentSkype.authInfo.Username.UrlEncode(), parentSkype.authInfo.Password.UrlEncode(), ppft.UrlEncode())),
+                        "application/x-www-form-urlencoded");
+                    string tParam = "";
+                    using (HttpWebResponse webResponse = (HttpWebResponse)tokenVerifyRequest.GetResponse())
+                    {
+                        string rawDownload = new StreamReader(webResponse.GetResponseStream()).ReadToEnd();
+                        tParam = new Regex("<input type=\"hidden\" name=\"t\" id=\"t\" value=\"(.*?)\">").Match(rawDownload).Groups[1].ToString();
+                    }
+                    // Step 3
+                    HttpWebRequest loginRequest = parentSkype.mainFactory.createWebRequest_POST("https://login.skype.com/login/microsoft?client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com",
+                        new string[][] { },
+                        Encoding.ASCII.GetBytes(string.Format("client_id=578134&redirect_uri=https%3A%2F%2web.skype.com&oauthPartner=999&site_name=lw.skype.com&t={0}", tParam)),
+                        "application/x-www-form-urlencoded");
+                    using (HttpWebResponse webResponse = (HttpWebResponse)loginRequest.GetResponse())
+                    {
+                        string rawDownload = new StreamReader(webResponse.GetResponseStream()).ReadToEnd();
+                        return new Regex("<input type=\"hidden\" name=\"skypetoken\" value=\"(.*?)\"/>").Match(rawDownload).Groups[1].ToString();
+                    }
                 default:
                     return null;
             }

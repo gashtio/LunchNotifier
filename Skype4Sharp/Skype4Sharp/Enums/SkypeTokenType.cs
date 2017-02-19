@@ -3,6 +3,7 @@
     public enum SkypeTokenType
     {
         Standard,
-        MSNP24
+        MSNP24,
+        OAuth,
     }
 }

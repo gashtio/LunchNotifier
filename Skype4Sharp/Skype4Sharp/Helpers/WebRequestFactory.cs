@@ -55,7 +55,15 @@ namespace Skype4Sharp.Helpers
             webRequest.ContentType = contentType;
             foreach (string[] headerPair in requestHeaders)
             {
-                webRequest.Headers.Add(headerPair[0], headerPair[1]);
+                if (headerPair[0] != "Cookie")
+                {
+                    webRequest.Headers.Add(headerPair[0], headerPair[1]);
+                }
+                else
+                {
+                    int splitPos = headerPair[1].IndexOf('=');
+                    webRequest.CookieContainer.Add(new Cookie(headerPair[1].Substring(0, splitPos), headerPair[1].Substring(splitPos + 1), "/", webRequest.RequestUri.Host));
+                }
             }
             webRequest.ContentLength = postData.Length;
             using (var requestStream = webRequest.GetRequestStream())

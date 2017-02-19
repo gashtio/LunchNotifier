@@ -1,158 +1,57 @@
-# Skype4Sharp
+# LunchNotifier
 
-Please consider this lib broken until further notice; as of now, the issue is getting the SkypeToken, which seems to be empty, causing the RegToken function to throw an error.
+Going to lunch is a very complex task that requires massive brainpower to choose where you would actually eat.
 
-Simple Web Skype implementation for C#.
-
-> Best .NET Skype API (by default)
-
-By reading this project's source code, compiling as a binary, redistributing assets found in this repository, etc, or ANY form of use, you must agree to the license enlisted below.
-
-If you do anything cool with this library, be sure to tell me :)
+It's becoming increasingly annoying to go to a restaurant's website, sift through the pages and find the daily menu, which is where LunchNotifier comes to help. It does all that automatically and then notifies whoever is interested!
 
 # License 
-See: https://github.com/lin-e/Skype4Sharp/blob/master/LICENSE.md
-
-# Bots running this API
-I don't endorse any of them, mainly cause they're just bad. (love you all)
-
-- [SimpleSkype] (https://github.com/lin-e/SimpleSkype) (I feel like I have to add this, cause it's my own plugin-based bot running this API)
-- [KranchyBot] (http://hatscripts.com/addskype?kranchy.bot)
-- [illegalBot] (http://hatscripts.com/addskype?illegalpw)
-
-# Events
-- [x] ChatMembersChanged
-- [x] ContactReceived
-- [x] ContactRequestReceived
-- [x] MessageEdited
-- [x] MessageReceived
-- [x] TopicChange
-- [x] CallStarted
-- [x] UserRoleChanged
-- [x] GroupPictureChanged
-- [x] FileReceived
-- [ ] PictureReceived
-
-# Credits
-- [Ghost] (https://github.com/NotGGhost/) Skidded so much code off him. Also, the authentication code. 
-> yung trump has permission to skid aids code to c#
-
-- [SpongyBacon] (https://github.com/sponges) Helped with any issues I was having (a.k.a. "moral support")
-- [Knackrack615] (http://knackrack615.me/) Helped with basic logic in the library
+See: https://github.com/gashtio/LunchNotifier/blob/master/LICENSE.md
 
 # Dependencies
 - [Json.NET] (http://www.newtonsoft.com/json)
+- [HtmlAgilityPack] (https://www.nuget.org/packages/HtmlAgilityPack)
+- [Skype4Sharp] (https://github.com/lin-e/Skype4Sharp)
+
+# Overview
+
+The program consists of lunch providers (`ILunchProvider`) and lunch notify targets (`ILunchNotifyTarget`).
+These are registered in the beginning of the program and then every provider supplies every target with information that it should broadcast.
+
+At the moment, there is one provider and one target (Skype). The communication between the provider and target is done through the `LunchInfo` structure, which is simply a `string` message for the moment, but it could possibly be extended to have an attachment or something else you might find useful.
 
 # Usage
-Look at the example bot for a working template, but if you really need full documentation, I'll provide it below.
-The example is in C# Console, but it should be easy enough to adapt.
 
-Logging in
-```C#
-static Skype4Sharp.Skype4Sharp mainSkype;
-static SkypeCredentials authCreds = new SkypeCredentials("USERNAME", "PASSWORD");
-static void Main(string[] args)
-{
-  mainSkype = new Skype4Sharp.Skype4Sharp(authCreds);
-  mainSkype.Login();
-}
-```
-Setting events
-```C#
-mainSkype.messageReceived += MainSkype_messageReceived;
-mainSkype.contactRequestReceived += MainSkype_contactRequestReceived;
-// Do the rest of the events yourself, these are the two most important ones in my opinion
-mainSkype.StartPoll();
-```
-Accepting a contact
-```C#
-private static void MainSkype_contactRequestReceived(ContactRequest sentRequest)
-{
-  sentRequest.Accept();
-}
-```
-Declining a contact
-```C#
-private static void MainSkype_contactRequestReceived(ContactRequest sentRequest)
-{
-  sentRequest.Decline();
-}
-```
-Sending a group message, editing it and more
-```C#
-private static void MainSkype_messageReceived(ChatMessage pMessage)
-{
-  ChatMessage rMessage = pMessage.Chat.SendMessage("Processing your message...");
-  rMessage.Body = "Second message";
-  rMessage.Type = MessageType.RichText;
-  rMessage.Body = "<b>THIS IS BOLD</b>";
-}
-```
-Messaging a user
-```C#
-ChatMessage rMessage = mainSkype.SendMessage("c0mmodity", "Hello me!");
-```
-Adding or removing a user
-```C#
-mainSkype.AddUser("c0mmodity", "I'd like to add you on Skype!");
-mainSkype.RemoveUser("c0mmodity");
-```
-Interacting with a chat (put in context, so it's easier for me to explain)
-```C#
-private static void MainSkype_messageReceived(ChatMessage pMessage)
-{
-  Chat newChat = pMessage.Chat;
-  Console.WriteLine("The chat's topic is {0}", newChat.Topic);
-  newChat.Topic = "Skype4Sharp";
-  Console.WriteLine("My role in this chat is '{0}'", newChat.Role.ToString());
-  newChat.Add("c0mmodity");
-  newChat.SetAdmin("c0mmodity");
-  Console.WriteLine("c0mmodity is a(n) {0}", newChat.UserRole("c0mmodity").ToString());
-  newChat.Kick("eroded");
-  newChat.Leave();
-}
-```
-Logging a call
-```C#
-private void MainSkype_callStarted(Chat originChat, User eventInitiator)
-{
-  Console.WriteLine("[EVENT]: CALL_STARTED > {0} ({1})", originChat.ID, eventInitiator.Username);
+The default implementation consists of 1 [provider](https://www.krivoto.com) and 1 notify target (Skype).
+The provider works without modifications, but for Skype to work you need to supply some information.
+
+By default, the Skype notidfier tries to read from the `cred.json` file from the current working directory a JSON-formatted file, which contains the *username*, *password* and *chat link* which are going to be used. The username and password are reqiured for logging in, and the chat link determines which chat to paste the message into. A sample file would look like this:
+
+```{JSON}
+{  
+	"user":"myskype@live.com",
+	"password":"superstrongpassword",
+	"chatLink":"https://db5-client-s.gateway.messenger.live.com/v1/threads/19:a480242bd5d54642aa0b52f21b7acab9@thread.skype"
 }
 ```
 
-# Contact
-If you have any issues, feel free to message me on Skype ('c0mmodity') or eMail me. My eMail is on my profile.
+## Chat link
+You can find the chat link using the provided Skype API. A small program that gets a list for all recent chats would be something like this:
 
-# FAQ
-(Not actually questions I've been asked, just what I'd assume would be asked.)
----
-Q : Why didn't you sell this?
+```{C#}
+Skype4Sharp.Skype4Sharp mainSkype = new Skype4Sharp.Skype4Sharp(new SkypeCredentials(user, pass));
+mainSkype.tokenType = Skype4Sharp.Enums.SkypeTokenType.OAuth;
+mainSkype.Login();
+foreach (Chat chat in mainSkype.GetRecentChats())
+{
+	Console.WriteLine(string.Format("Chat \"{0}\": {1}",
+		chat.Type == Skype4Sharp.Enums.ChatType.Group ? chat.Topic : chat.Participants[1].DisplayName,
+		chat.ChatLink));
+}
+```
 
-A : It's not my code to sell. Also, as Skype4COM is bad enough as it is, you C# devs deserve options.
+You'll then need to go through the list and find the chat you want to dump the information in.
 
----
-Q : This isn't working! I need help.
+## Scheduling a task
 
-A : No. I don't offer formal support. If you really are stuck, message me on Skype (found in the Contacts section).
+This program is intended to be used as a daily reminder for your lunch options, so it's best to have 1 person set it up as a scheduled task (e.g. in Windows Task Scheduler) that gives you the meal options for today.
 
----
-Q : I have a new feature I'd like for you to add.
-
-A : Sure! Please raise it as an issue and I'll get back to you as soon as I can.
-
----
-Q : Can I sell this code?
-
-A : No. Read LICENSE.md if you want a more detailed answer, but you cannot sell my code as is, without any obvious modifications.
-
----
-Q : *feature* is broken, what can I do?
-
-A : Raise it as an issue, and I'll sort it out when I can. Please understand that I'm not paid for this, and I do have real world commitments.
-
----
-Q : Wow! This is amazing, how can I help? (yeah, no-one's actually said this, but it'd be nice, y'know?)
-
-A : You can donate to me via Bitcoin (1BKbYhqNVkKzZ5Q5p7Jtb2MyautnqBC9Qm), or just send me a nice message :smile:
-
----
